@@ -78,22 +78,19 @@ def predict_dir(data_dir, clf, proj_name):
 	return data
 
 
-def main(base):
-	dirs = list(
-		filter(lambda x: os.path.isdir(x), map(lambda x: os.path.join(base, x, 'dataset'), os.listdir(base))))
-	clf = dict(all_estimators())["_BinaryGaussianProcessClassifierLaplace"](**{'copy_X_train': True, 'kernel': None, 'max_iter_predict': 100, 'n_restarts_optimizer': 0, 'optimizer': 'fmin_l_bfgs_b', 'random_state': 42, 'warm_start': False})
-	p = 'C:\\Users\\User\\Downloads\\New folder (11)\\repository_data (52)\\dataset\\directory-server'
-	predict_dir(p, None, 'x')
+def main():
+	# clf = dict(all_estimators())["_BinaryGaussianProcessClassifierLaplace"](**{'copy_X_train': True, 'kernel': None, 'max_iter_predict': 100, 'n_restarts_optimizer': 0, 'optimizer': 'fmin_l_bfgs_b', 'random_state': None, 'warm_start': False})
+	clf = dict(all_estimators())["GaussianProcessClassifier"](**{'copy_X_train': True, 'kernel': None, 'max_iter_predict': 100, 'multi_class': 'one_vs_rest', 'n_jobs': None, 'n_restarts_optimizer': 0, 'optimizer': 'fmin_l_bfgs_b', 'random_state': None, 'warm_start': False})
 	all_data = []
-	for data_dir in dirs[:1]:
-		for x in os.listdir(data_dir):
-			try:
-				all_data.extend(predict_dir(os.path.join(data_dir, x), clf, x))
-			except Exception as e:
-				print(e)
-				pass
-	pd.DataFrame(all_data).to_csv(r"c:\temp\e2.csv", index=False)
+	data_dir = os.path.abspath(r"dataset")
+	for x in filter(os.path.isdir, os.listdir(data_dir)):
+		try:
+			all_data.extend(predict_dir(os.path.join(data_dir, x), clf, x))
+		except Exception as e:
+			print(e)
+			pass
+	pd.DataFrame(all_data).to_csv(r"results.csv", index=False)
 
 
 if __name__ == "__main__":
-	main(r"C:\Users\User\Downloads\New folder (11)")
+	main()
