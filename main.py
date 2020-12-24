@@ -83,11 +83,13 @@ def main():
 	clf = dict(all_estimators())["GaussianProcessClassifier"](**{'copy_X_train': True, 'kernel': None, 'max_iter_predict': 100, 'multi_class': 'one_vs_rest', 'n_jobs': None, 'n_restarts_optimizer': 0, 'optimizer': 'fmin_l_bfgs_b', 'random_state': None, 'warm_start': False})
 	all_data = []
 	data_dir = os.path.abspath(r"dataset")
-	print(os.listdir(data_dir))
-	for x in filter(os.path.isdir, os.listdir(data_dir)):
+	for x in os.listdir(data_dir):
 		try:
+			dir = os.path.join(data_dir, x)
+			if not os.path.isdir(dir):
+				continue
 			print("evaluate on " + x)
-			all_data.extend(predict_dir(os.path.join(data_dir, x), clf, x))
+			all_data.extend(predict_dir(dir, clf, x))
 		except Exception as e:
 			print(e)
 			pass
